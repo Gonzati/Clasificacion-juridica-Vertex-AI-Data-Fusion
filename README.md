@@ -8,11 +8,10 @@ Combina **IA generativa (Gemini 2.0)**, procesamiento en **Cloud Data Fusion**, 
 ## Arquitectura general
 
 📂 Google Cloud Storage (rag-legal-corpus)
-│
-▼
+
 🤖 Vertex AI (Gemini 2.0 - Full Text Classification)
-│ ├── Extracción de motivos jurídicos
-│ └── Clasificación de resultado y parte demandada
+│ Extracción de motivos jurídicos
+│ Clasificación de resultado y parte demandada
 ▼
 📂 Google Cloud Storage 
 │
@@ -25,6 +24,6 @@ Combina **IA generativa (Gemini 2.0)**, procesamiento en **Cloud Data Fusion**, 
 │
 ▼
 📊 Looker Studio Dashboard
-├── Distribución de motivos
-└── Tasa de sentencias favorables vs desfavorables
+Distribución de motivos
+Tasa de sentencias favorables vs desfavorables
 
