@@ -29,7 +29,7 @@ Combina **IA generativa (Gemini 2.0)**, procesamiento en **Cloud Data Fusion**, 
 
 ### Notebook: **Clasificación de resultado y parte demandada**
 - Analiza la sentencia completa y determina:
-- `demandado`: `"eos"` o `"contrario"`
+- `demandado`: `"xxx"` o `"contrario"`
 - `resultado`: `"favorable"` o `"desfavorable"`
 - Salida incremental en bucket de destino.
 
