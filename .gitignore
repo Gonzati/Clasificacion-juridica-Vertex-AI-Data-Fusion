@@ -1,0 +1,31 @@
+# Python / sistema
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+
+# Archivos de entorno
+.env
+*.env
+credentials.json
+adc.json
+
+# Archivos locales / editores
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Backups
+*.bak
+*.old
+
+# Checkpoints (por si se crean en otras carpetas)
+.ipynb_checkpoints/
+
+# Exportaciones pesadas
+*.csv
+*.parquet
+*.xlsx
+*.zip
