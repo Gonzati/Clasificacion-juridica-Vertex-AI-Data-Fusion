@@ -13,7 +13,7 @@ TS=$(date +%s)
 OUT1="/tmp/demandadoyresultadogcp_out_${TS}.ipynb"
 OUT2="/tmp/etiquetavertexgcp_out_${TS}.ipynb"
 
-# Ejecuta ambos notebooks (si aceptan parámetros, añade --parameters ...)
+# Ejecuta ambos notebooks
 papermill "$NB_DIR/demandadoyresultadogcp.ipynb" "$OUT1"
 papermill "$NB_DIR/etiquetavertexgcp.ipynb"      "$OUT2"
 
