@@ -1,0 +1,355 @@
+{
+  "name": "sentenciasmerged",
+  "description": "Data Pipeline Application",
+  "artifact": {
+    "name": "cdap-data-pipeline",
+    "version": "6.11.1",
+    "scope": "SYSTEM"
+  },
+  "config": {
+    "resources": {
+      "memoryMB": 2048,
+      "virtualCores": 1
+    },
+    "driverResources": {
+      "memoryMB": 2048,
+      "virtualCores": 1
+    },
+    "connections": [
+      {
+        "from": "GCS",
+        "to": "Joiner"
+      },
+      {
+        "from": "Joiner",
+        "to": "Wrangler"
+      },
+      {
+        "from": "Wrangler",
+        "to": "BigQuery"
+      },
+      {
+        "from": "BigQuery",
+        "to": "GCS Move"
+      },
+      {
+        "from": "GCS Move",
+        "to": "GCS Move2"
+      },
+      {
+        "from": "GCS2",
+        "to": "Joiner"
+      }
+    ],
+    "comments": [],
+    "postActions": [],
+    "properties": {},
+    "processTimingEnabled": true,
+    "stageLoggingEnabled": false,
+    "stages": [
+      {
+        "name": "GCS",
+        "plugin": {
+          "name": "GCSFile",
+          "type": "batchsource",
+          "label": "GCS",
+          "artifact": {
+            "name": "google-cloud",
+            "version": "0.24.1",
+            "scope": "SYSTEM"
+          },
+          "properties": {
+            "useConnection": "true",
+            "connection": "${conn(Cloud Storage Default)}",
+            "referenceName": "curated5896.sentencias_resultado_vertex.csv",
+            "path": "gs://curated5896/sentencias_resultado_vertex.csv",
+            "format": "csv",
+            "sampleSize": "1000",
+            "filenameOnly": "false",
+            "recursive": "false",
+            "ignoreNonExistingFolders": "false",
+            "encrypted": "false",
+            "fileEncoding": "UTF-8",
+            "schema": "{\"name\":\"etlSchemaBody\",\"type\":\"record\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"demandado\",\"type\":[\"string\",\"null\"]},{\"name\":\"resultado\",\"type\":[\"string\",\"null\"]}]}",
+            "enableQuotedValues": "false",
+            "skipHeader": "true"
+          }
+        },
+        "outputSchema": "{\"name\":\"etlSchemaBody\",\"type\":\"record\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"demandado\",\"type\":[\"string\",\"null\"]},{\"name\":\"resultado\",\"type\":[\"string\",\"null\"]}]}",
+        "id": "GCS",
+        "type": "batchsource",
+        "label": "GCS",
+        "icon": "fa-plug",
+        "$$hashKey": "object:32",
+        "isPluginAvailable": true,
+        "_uiPosition": {
+          "left": "110px",
+          "top": "269px"
+        }
+      },
+      {
+        "name": "Joiner",
+        "plugin": {
+          "name": "Joiner",
+          "type": "batchjoiner",
+          "label": "Joiner",
+          "artifact": {
+            "name": "core-plugins",
+            "version": "2.13.1",
+            "scope": "SYSTEM"
+          },
+          "properties": {
+            "selectedFields": "GCS.nombre as nombre,GCS.demandado as demandado,GCS.resultado as resultado,GCS2.nombre as referencia,GCS2.motivo1 as motivo1,GCS2.motivo2 as motivo2,GCS2.motivo3 as motivo3,GCS2.motivo4 as motivo4",
+            "requiredInputs": "GCS,GCS2",
+            "conditionType": "basic",
+            "joinKeys": "GCS.nombre = GCS2.nombre",
+            "joinNullKeys": "true",
+            "distributionEnabled": "false",
+            "schema": "{\"type\":\"record\",\"name\":\"join.typeoutput\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"demandado\",\"type\":[\"string\",\"null\"]},{\"name\":\"resultado\",\"type\":[\"string\",\"null\"]},{\"name\":\"referencia\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo1\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo2\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo3\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo4\",\"type\":[\"string\",\"null\"]}]}"
+          }
+        },
+        "outputSchema": [
+          {
+            "name": "etlSchemaBody",
+            "schema": "{\"type\":\"record\",\"name\":\"join.typeoutput\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"demandado\",\"type\":[\"string\",\"null\"]},{\"name\":\"resultado\",\"type\":[\"string\",\"null\"]},{\"name\":\"referencia\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo1\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo2\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo3\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo4\",\"type\":[\"string\",\"null\"]}]}"
+          }
+        ],
+        "inputSchema": [
+          {
+            "name": "GCS",
+            "schema": "{\"name\":\"etlSchemaBody\",\"type\":\"record\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"demandado\",\"type\":[\"string\",\"null\"]},{\"name\":\"resultado\",\"type\":[\"string\",\"null\"]}]}"
+          },
+          {
+            "name": "GCS2",
+            "schema": "{\"name\":\"etlSchemaBody\",\"type\":\"record\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo1\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo2\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo3\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo4\",\"type\":[\"string\",\"null\"]}]}"
+          }
+        ],
+        "id": "Joiner",
+        "type": "batchjoiner",
+        "label": "Joiner",
+        "icon": "icon-joiner",
+        "$$hashKey": "object:33",
+        "isPluginAvailable": true,
+        "_uiPosition": {
+          "left": "410px",
+          "top": "364px"
+        }
+      },
+      {
+        "name": "Wrangler",
+        "plugin": {
+          "name": "Wrangler",
+          "type": "transform",
+          "label": "Wrangler",
+          "artifact": {
+            "name": "wrangler-transform",
+            "version": "4.11.1",
+            "scope": "SYSTEM"
+          },
+          "properties": {
+            "field": "*",
+            "expressionLanguage": "jexl",
+            "precondition": "false",
+            "on-error": "fail-pipeline",
+            "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"demandado\",\"type\":[\"string\",\"null\"]},{\"name\":\"resultado\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo1\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo2\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo3\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo4\",\"type\":[\"string\",\"null\"]}]}"
+          }
+        },
+        "outputSchema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"demandado\",\"type\":[\"string\",\"null\"]},{\"name\":\"resultado\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo1\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo2\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo3\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo4\",\"type\":[\"string\",\"null\"]}]}",
+        "inputSchema": [
+          {
+            "name": "Joiner",
+            "schema": "{\"type\":\"record\",\"name\":\"join.typeoutput\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"demandado\",\"type\":[\"string\",\"null\"]},{\"name\":\"resultado\",\"type\":[\"string\",\"null\"]},{\"name\":\"referencia\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo1\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo2\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo3\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo4\",\"type\":[\"string\",\"null\"]}]}"
+          }
+        ],
+        "id": "Wrangler",
+        "type": "transform",
+        "label": "Wrangler",
+        "icon": "icon-DataPreparation",
+        "$$hashKey": "object:34",
+        "isPluginAvailable": true,
+        "_uiPosition": {
+          "left": "710px",
+          "top": "364px"
+        }
+      },
+      {
+        "name": "BigQuery",
+        "plugin": {
+          "name": "BigQueryTable",
+          "type": "batchsink",
+          "label": "BigQuery",
+          "artifact": {
+            "name": "google-cloud",
+            "version": "0.24.1",
+            "scope": "SYSTEM"
+          },
+          "properties": {
+            "useConnection": "true",
+            "connection": "${conn(BigQuery Default)}",
+            "dataset": "Sentencias",
+            "table": "sentenciasmerged",
+            "operation": "insert",
+            "truncateTable": "false",
+            "allowSchemaRelaxation": "true",
+            "readTimeout": "120",
+            "location": "US",
+            "createPartitionedTable": "false",
+            "partitioningType": "TIME",
+            "timePartitioningType": "DAY",
+            "partitionFilterRequired": "false",
+            "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"demandado\",\"type\":[\"string\",\"null\"]},{\"name\":\"resultado\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo1\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo2\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo3\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo4\",\"type\":[\"string\",\"null\"]}]}"
+          }
+        },
+        "outputSchema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"demandado\",\"type\":[\"string\",\"null\"]},{\"name\":\"resultado\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo1\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo2\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo3\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo4\",\"type\":[\"string\",\"null\"]}]}",
+        "inputSchema": [
+          {
+            "name": "Wrangler",
+            "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"demandado\",\"type\":[\"string\",\"null\"]},{\"name\":\"resultado\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo1\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo2\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo3\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo4\",\"type\":[\"string\",\"null\"]}]}"
+          }
+        ],
+        "id": "BigQuery",
+        "type": "batchsink",
+        "label": "BigQuery",
+        "icon": "fa-plug",
+        "$$hashKey": "object:35",
+        "isPluginAvailable": true,
+        "_uiPosition": {
+          "left": "1010px",
+          "top": "364px"
+        }
+      },
+      {
+        "name": "GCS Move",
+        "plugin": {
+          "name": "GCSMove",
+          "type": "action",
+          "label": "GCS Move",
+          "artifact": {
+            "name": "google-cloud",
+            "version": "0.24.1",
+            "scope": "SYSTEM"
+          },
+          "properties": {
+            "project": "auto-detect",
+            "sourcePath": "gs://rag-legal-corpus/*.txt",
+            "destPath": "gs://procesadas",
+            "recursive": "false",
+            "overwrite": "true",
+            "serviceAccountType": "filePath",
+            "serviceFilePath": "auto-detect",
+            "location": "us",
+            "readTimeout": "20"
+          }
+        },
+        "outputSchema": [
+          {
+            "name": "etlSchemaBody",
+            "schema": ""
+          }
+        ],
+        "id": "GCS-Move",
+        "type": "action",
+        "label": "GCS Move",
+        "icon": "fa-plug",
+        "$$hashKey": "object:36",
+        "isPluginAvailable": true,
+        "_uiPosition": {
+          "left": "1310px",
+          "top": "364px"
+        }
+      },
+      {
+        "name": "GCS Move2",
+        "plugin": {
+          "name": "GCSMove",
+          "type": "action",
+          "label": "GCS Move2",
+          "artifact": {
+            "name": "google-cloud",
+            "version": "0.24.1",
+            "scope": "SYSTEM"
+          },
+          "properties": {
+            "project": "auto-detect",
+            "sourcePath": "gs://curated5896/*.csv",
+            "destPath": "gs://curated5896/etiquetadas",
+            "recursive": "false",
+            "overwrite": "true",
+            "serviceAccountType": "filePath",
+            "serviceFilePath": "auto-detect",
+            "location": "us",
+            "readTimeout": "20"
+          }
+        },
+        "outputSchema": [
+          {
+            "name": "etlSchemaBody",
+            "schema": ""
+          }
+        ],
+        "id": "GCS-Move2",
+        "type": "action",
+        "label": "GCS Move2",
+        "icon": "fa-plug",
+        "$$hashKey": "object:37",
+        "isPluginAvailable": true,
+        "_uiPosition": {
+          "left": "1610px",
+          "top": "364px"
+        }
+      },
+      {
+        "name": "GCS2",
+        "plugin": {
+          "name": "GCSFile",
+          "type": "batchsource",
+          "label": "GCS2",
+          "artifact": {
+            "name": "google-cloud",
+            "version": "0.24.1",
+            "scope": "SYSTEM"
+          },
+          "properties": {
+            "useConnection": "true",
+            "connection": "${conn(Cloud Storage Default)}",
+            "referenceName": "curated5896.sentencias_motivos_vertex.csv",
+            "path": "gs://curated5896/sentencias_motivos_vertex.csv",
+            "format": "csv",
+            "sampleSize": "1000",
+            "enableQuotedValues": "false",
+            "skipHeader": "true",
+            "filenameOnly": "false",
+            "recursive": "false",
+            "ignoreNonExistingFolders": "false",
+            "encrypted": "false",
+            "fileEncoding": "UTF-8",
+            "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo1\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo2\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo3\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo4\",\"type\":[\"string\",\"null\"]}]}"
+          }
+        },
+        "outputSchema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"nombre\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo1\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo2\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo3\",\"type\":[\"string\",\"null\"]},{\"name\":\"motivo4\",\"type\":[\"string\",\"null\"]}]}",
+        "id": "GCS2",
+        "type": "batchsource",
+        "label": "GCS2",
+        "icon": "fa-plug",
+        "$$hashKey": "object:38",
+        "isPluginAvailable": true,
+        "_uiPosition": {
+          "left": "110px",
+          "top": "459px"
+        }
+      }
+    ],
+    "schedule": "0 1 */1 * *",
+    "engine": "spark",
+    "numOfRecordsPreview": 100,
+    "rangeRecordsPreview": {
+      "min": 1,
+      "max": "5000"
+    },
+    "description": "Data Pipeline Application",
+    "maxConcurrentRuns": 1,
+    "pushdownEnabled": false,
+    "transformationPushdown": {}
+  },
+  "version": "dfa93b59-bbb5-11f0-a8d5-2612a05f50ae"
+}
