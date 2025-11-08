@@ -88,8 +88,7 @@ Integrar análisis de tendencias temporal en BigQuery y Looker.
 
 👤 Autor
 
-Ángel Argibay
+
 📍 Data Engineer | Legal-Tech Developer
 💼 Proyecto desarrollado como parte del laboratorio de IA Jurídica en Vertex AI
-🔗 www.linkedin.com/in/ángel-argibay-cabo-842504174
- · https://github.com/Gonzati
+
