@@ -86,7 +86,8 @@ Extender el pipeline a otros tipos de documentos (autos, decretos y providencias
 
 Integrar análisis de tendencias temporal en BigQuery y Looker.
 
-👤 Autor
+👤 Autor Ángel Argibay
+Linkedin: www.linkedin.com/in/ángel-argibay-cabo-842504174
 
 
 📍 Data Engineer | Legal-Tech Developer
