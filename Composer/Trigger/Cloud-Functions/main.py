@@ -6,7 +6,7 @@ from google.auth import default
 from google.auth.transport.requests import AuthorizedSession
 
 PROJECT  = os.environ["GCP_PROJECT"]
-LOCATION = os.environ["LOCATION"]         # us-east4 (tu Composer)
+LOCATION = os.environ["LOCATION"]         # us-east4 
 ENV      = os.environ["COMPOSER_ENV"]     # composer-rag
 DAG_ID   = os.environ["DAG_ID"]           # run_notebooks_and_datafusion
 
